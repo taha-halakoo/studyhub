@@ -1,31 +1,47 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-TIMESTAMP=$(date +"%d-%m-%Y-%I_%M-%p")
-UPDATE_DIR="/mnt/d/ai-workspace/studyhub-updates/studyhub-update-$TIMESTAMP"
+echo "🔒 Freezing main branch"
+git status --porcelain | grep . && {
+  echo "❌ Uncommitted changes in root. Commit first."
+  exit 1
+}
 
-mkdir -p "$UPDATE_DIR"
+echo "🧹 Resetting sandbox"
+rm -rf sandbox/working-copy
+mkdir -p sandbox
 
-echo "🔍 Running Gemini agents..."
+echo "🧬 Cloning main → sandbox"
+rsync -a \
+  --exclude node_modules \
+  --exclude .git \
+  main/ sandbox/working-copy/
 
-gemini < .agents/ui-agent.md > /tmp/ui.output.md
-gemini < .agents/module-agent.md > /tmp/module.output.md
-gemini < .agents/state-agent.md > /tmp/state.output.md
+cd sandbox/working-copy
 
-echo "🧠 Coordinating..."
+echo "🤖 Running Gemini update (SANDBOX ONLY)"
+../../.ai/run-gemini.sh
 
-cat /tmp/*.output.md | gemini < .agents/coordinator.md > /tmp/final.plan.md
+echo "🧪 Running sanity checks"
+npm install
+npm run build || {
+  echo "❌ Build failed in sandbox. Aborting."
+  exit 1
+}
 
-echo "📝 Applying changes manually or via Claude (recommended)"
+cd ../../
 
-git diff > "$UPDATE_DIR/patch.diff"
+echo "📊 Showing diff (sandbox → main)"
+diff -ruN main sandbox/working-copy || true
 
-echo "# StudyHub Update $TIMESTAMP" > "$UPDATE_DIR/README.md"
-echo "" >> "$UPDATE_DIR/README.md"
-cat /tmp/final.plan.md >> "$UPDATE_DIR/README.md"
+echo
+read -p "✅ Apply these changes to main? (yes/no): " confirm
 
-git add .
-git commit -m "update($TIMESTAMP): automated AI update"
-git push
+if [[ "$confirm" == "yes" ]]; then
+  echo "🚀 Applying changes"
+  rsync -a --delete sandbox/working-copy/ main/
+  echo "✅ Main updated safely."
+else
+  echo "🛑 Aborted. Main untouched."
+fi
 
-echo "✅ Update complete"

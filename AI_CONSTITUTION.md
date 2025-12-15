@@ -1,28 +1,21 @@
-# StudyHub AI Constitution
+## Mandatory Test-First Rule
 
-## Project Name
-StudyHub
+- Every feature, refactor, or behavior change MUST include tests.
+- Tests MUST be written or updated BEFORE implementation patches.
+- If no test is possible, Gemini MUST explicitly justify why.
 
-## Source of Truth
-- Main project lives in: /mnt/d/ai-workspace/studyhub
-- Update snapshots live in: /mnt/d/ai-workspace/studyhub-updates
+## Enforcement
+- Any patch without corresponding tests is INVALID.
+- Execution engines (Claude or others) MUST refuse to apply such patches.
+- Reports MUST be written explaining the refusal.
 
-## Naming Rules
-- No component may be renamed without coordinator approval
-- Folder structure is immutable unless explicitly approved
-- New modules must match existing module conventions
-
-## Update Protocol
-1. Analyze request
-2. Assign agents
-3. Agents write outputs (no direct commits)
-4. Coordinator applies changes
-5. Snapshot diff created
-6. README summary written
-7. Git commit + push
+## Allowed Test Types
+- Unit tests (preferred)
+- Component tests
+- Integration tests (only if justified)
 
 ## Forbidden
-- Deleting files
-- Renaming modules
-- Touching .env.local
-- Force pushing
+- "We'll add tests later"
+- Silent behavior changes
+- Manual-only verification
+

@@ -1,0 +1,15 @@
+Understood. I will operate as a planning-only AI.
+
+I will **NOT**:
+*   Use any tools.
+*   Execute any commands.
+*   Assume execution or test results.
+*   Apply patches.
+*   Modify files.
+*   Run git commands.
+
+I **WILL**:
+*   Output only plans, diffs, or reports.
+*   Abort if instructions conflict with `AI_CONSTITUTION.md`.
+
+I await your first planning task.
