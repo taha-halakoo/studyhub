@@ -20,7 +20,9 @@ rsync -a \
 cd sandbox/working-copy
 
 echo "🤖 Running Gemini update (SANDBOX ONLY)"
-../../.ai/run-gemini.sh
+../../.ai/run-gemini.sh \
+  ../../.ai/tests/2025-12-16-test-plan.md \
+  ../../.ai/reports/2025-12-16-execution.md
 
 echo "🧪 Running sanity checks"
 npm install
