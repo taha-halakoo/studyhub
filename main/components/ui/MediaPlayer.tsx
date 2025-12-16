@@ -9,8 +9,12 @@ const TRACKS = [
 
 export const MediaPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [trackIndex, setTrackIndex] = useState(0);
-  const [volume, setVolume] = useState(0.5);
+  const [trackIndex, setTrackIndex] = useState(() => {
+    return parseInt(localStorage.getItem('studyhub_music_track') || '0', 10);
+  });
+  const [volume, setVolume] = useState(() => {
+    return parseFloat(localStorage.getItem('studyhub_music_vol') || '0.5');
+  });
   const [isExpanded, setIsExpanded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -23,7 +27,12 @@ export const MediaPlayer = () => {
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume;
+    localStorage.setItem('studyhub_music_vol', volume.toString());
   }, [volume]);
+
+  useEffect(() => {
+    localStorage.setItem('studyhub_music_track', trackIndex.toString());
+  }, [trackIndex]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
   const nextTrack = () => setTrackIndex((i) => (i + 1) % TRACKS.length);
@@ -40,6 +49,8 @@ export const MediaPlayer = () => {
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
           className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#1e1e2e] px-4 py-1 rounded-t-xl border border-[#313244] border-b-0 text-xs text-[#a6adc8] font-bold uppercase tracking-widest hover:text-white"
+          aria-expanded={isExpanded}
+          aria-label={isExpanded ? "Collapse Music Player" : "Expand Music Player"}
         >
           {isExpanded ? 'Hide' : 'Sonic Layer'}
         </button>
@@ -57,29 +68,32 @@ export const MediaPlayer = () => {
 
         {/* Controls */}
         <div className="flex items-center gap-4">
-          <button onClick={prevTrack} className="text-[#a6adc8] hover:text-white"><SkipBack size={20} /></button>
+          <button onClick={prevTrack} className="text-[#a6adc8] hover:text-white" aria-label="Previous Track"><SkipBack size={20} /></button>
           <button 
             onClick={togglePlay} 
             className="w-10 h-10 rounded-full bg-[#89b4fa] text-[#1e1e2e] flex items-center justify-center hover:bg-white transition-colors"
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
           </button>
-          <button onClick={nextTrack} className="text-[#a6adc8] hover:text-white"><SkipForward size={20} /></button>
+          <button onClick={nextTrack} className="text-[#a6adc8] hover:text-white" aria-label="Next Track"><SkipForward size={20} /></button>
         </div>
 
         {/* Volume */}
         <div className="flex items-center gap-2 w-32 hidden md:flex">
-          <button onClick={() => setVolume(v => v === 0 ? 0.5 : 0)} className="text-[#585b70] hover:text-white">
+          <button onClick={() => setVolume(v => v === 0 ? 0.5 : 0)} className="text-[#585b70] hover:text-white" aria-label={volume === 0 ? "Unmute" : "Mute"}>
             {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
           </button>
           <input 
             type="range" min="0" max="1" step="0.1" 
             value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
             className="w-full h-1 bg-[#313244] rounded-full appearance-none cursor-pointer accent-[#89b4fa]"
+            aria-label="Volume Control"
           />
         </div>
 
-        <audio ref={audioRef} src={currentTrack.url} loop onEnded={nextTrack} />
+        {/* Removed 'loop' so onEnded fires correctly to go to next track */}
+        <audio ref={audioRef} src={currentTrack.url} onEnded={nextTrack} />
       </div>
     </div>
   );

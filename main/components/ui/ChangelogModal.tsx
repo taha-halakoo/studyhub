@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X, GitCommit } from 'lucide-react';
 
 interface Props {
@@ -19,16 +19,40 @@ const UPDATES = [
 ];
 
 export const ChangelogModal = ({ isOpen, onClose }: Props) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      document.addEventListener('keydown', handleEscape);
+      modalRef.current?.focus(); // Simple focus management
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-[#1e1e2e] w-full max-w-md rounded-2xl border border-[#313244] shadow-2xl relative overflow-hidden flex flex-col max-h-[80vh]" onClick={e => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="changelog-title"
+    >
+      <div 
+        ref={modalRef}
+        className="bg-[#1e1e2e] w-full max-w-md rounded-2xl border border-[#313244] shadow-2xl relative overflow-hidden flex flex-col max-h-[80vh]" 
+        onClick={e => e.stopPropagation()}
+        tabIndex={-1}
+      >
         <div className="p-4 border-b border-[#313244] flex justify-between items-center bg-[#252535]">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <h2 id="changelog-title" className="text-lg font-bold text-white flex items-center gap-2">
             <GitCommit className="text-[#a6e3a1]" /> System Changelog
           </h2>
-          <button onClick={onClose} className="text-[#a6adc8] hover:text-white"><X /></button>
+          <button onClick={onClose} className="text-[#a6adc8] hover:text-white" aria-label="Close Changelog"><X /></button>
         </div>
         
         <div className="p-4 overflow-y-auto custom-scrollbar space-y-4">

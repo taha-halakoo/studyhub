@@ -33,7 +33,10 @@ export const LoadingScreen = ({ logs }: { logs?: string[] }) => {
       </div>
 
       {/* DEBUG LOG OUTPUT */}
-      <div className="w-full max-w-md bg-[#11111b] rounded-lg border border-[#313244] p-4 font-mono text-[10px] text-[#a6adc8] h-48 overflow-y-auto custom-scrollbar">
+      <div 
+        className="w-full max-w-md bg-[#11111b] rounded-lg border border-[#313244] p-4 font-mono text-[10px] text-[#a6adc8] h-48 overflow-y-auto custom-scrollbar"
+        aria-live="polite"
+      >
         <div className="text-[#89b4fa] font-bold mb-2 uppercase tracking-wider border-b border-[#313244] pb-1">System Init Log</div>
         {logs && logs.length > 0 ? (
             logs.map((log, i) => (

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Save, Trash2, Plus, FileText, Maximize2, Minimize2, Tag, Pin, Link, Volume2, VolumeX, AlignLeft, Mic, MicOff, LayoutTemplate, Search, Clock, BookOpen } from 'lucide-react';
+import { Save, Trash2, Plus, FileText, Maximize2, Minimize2, Tag, Pin, Link, Volume2, VolumeX, AlignLeft, Mic, MicOff, LayoutTemplate, Search, Clock, BookOpen, Inbox } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { Note } from '../../../types';
 import { MagneticButton } from '../../ui/MagneticButton';
 import { TiltCard } from '../../ui/TiltCard';
+import { EmptyState } from '../../ui/EmptyState';
 
 const MarkdownPreview = ({ content, allNotes, onLinkClick }: { content: string, allNotes: Note[], onLinkClick: (title: string) => void }) => {
   if (!content) return <div className="text-[#585b70] italic flex flex-col items-center justify-center h-full opacity-50"><span>Preview will appear here...</span></div>;
@@ -167,6 +168,14 @@ export default function NotesModule() {
                 </div>
               </div>
             ))}
+            {sortedNotes.length === 0 && (
+                <EmptyState 
+                    title="Vault Empty" 
+                    description="No notes found matching your criteria." 
+                    icon={Inbox} 
+                    className="mt-10"
+                />
+            )}
           </div>
         </TiltCard>
       )}

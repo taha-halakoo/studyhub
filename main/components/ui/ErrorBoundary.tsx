@@ -30,9 +30,9 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="w-24 h-24 bg-[#f38ba8]/20 rounded-full flex items-center justify-center mb-6">
             <AlertTriangle size={48} className="text-[#f38ba8]" />
           </div>
-          <h1 className="text-4xl font-black tracking-tight mb-2">CRITICAL SYSTEM FAILURE</h1>
+          <h1 className="text-3xl font-black tracking-tight mb-2">System Encountered an Error</h1>
           <p className="text-[#a6adc8] max-w-md text-center mb-8 font-mono text-sm">
-            {this.state.error?.message || "An unexpected anomaly has occurred in the neural network."}
+            {this.state.error?.message || "An unexpected anomaly has occurred. Please reboot the system."}
           </p>
           <button 
             onClick={() => window.location.reload()}

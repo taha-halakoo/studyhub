@@ -3,6 +3,7 @@ import { PenTool, Calendar, Smile, Meh, Frown, ThumbsUp, ThumbsDown, Book, Save,
 import { useApp } from '../../../context/AppContext';
 import { MagneticButton } from '../../ui/MagneticButton';
 import { TiltCard } from '../../ui/TiltCard';
+import { EmptyState } from '../../ui/EmptyState';
 
 const MOODS = [
   { label: 'Great', icon: ThumbsUp, color: '#a6e3a1' },
@@ -174,10 +175,12 @@ export default function JournalModule() {
             );
           })}
           {journalEntries.length === 0 && (
-            <div className="text-center text-[#585b70] text-sm py-20 flex flex-col items-center">
-                <Book size={48} className="opacity-20 mb-4" />
-                No logs recorded.
-            </div>
+            <EmptyState 
+              title="No Logs Recorded" 
+              description="Start your first entry to track your journey." 
+              icon={Book} 
+              className="py-12"
+            />
           )}
         </div>
       </TiltCard>

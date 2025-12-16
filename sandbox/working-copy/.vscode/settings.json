@@ -2,5 +2,6 @@
   "css.customData": ["./.vscode/css-data.json"],
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false
+  "less.validate": false,
+  "git.ignoreLimitWarning": true
 }

@@ -3,6 +3,7 @@ import { Folder, Plus, Trash2, Layout, BookOpen, CheckCircle, FileText, Layers, 
 import { useApp } from '../../../context/AppContext';
 import { MagneticButton } from '../../ui/MagneticButton';
 import { TiltCard } from '../../ui/TiltCard';
+import { EmptyState } from '../../ui/EmptyState';
 
 const ICONS = ['Folder', 'Layout', 'BookOpen', 'CheckCircle', 'FileText', 'Layers', 'Archive'];
 
@@ -162,12 +163,13 @@ export default function ProjectsModule() {
         ))}
         
         {projects.length === 0 && (
-          <div className="col-span-full py-24 text-center border-2 border-dashed border-[#313244] rounded-3xl flex flex-col items-center justify-center group hover:border-[#89b4fa]/30 transition-colors">
-            <div className="p-6 bg-[#1e1e2e] rounded-full mb-4 group-hover:scale-110 transition-transform">
-                <Folder size={48} className="text-[#313244] group-hover:text-[#89b4fa] transition-colors" />
-            </div>
-            <h3 className="text-[#a6adc8] font-bold text-lg">No Active Blueprints</h3>
-            <p className="text-[#585b70]">Initialize a new workspace to organize operations.</p>
+          <div className="col-span-full">
+            <EmptyState 
+              title="No Active Blueprints" 
+              description="Initialize a new workspace to organize operations." 
+              icon={Folder} 
+              className="border-2 border-dashed border-[#313244] rounded-3xl py-24 group hover:border-[#89b4fa]/30 transition-colors"
+            />
           </div>
         )}
       </div>

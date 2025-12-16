@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Plus, Trash2, Calendar as CalIcon, CheckSquare, Layout, List, Grid, ChevronDown, ChevronRight, AlertCircle, Clock, Repeat, Skull, Zap } from 'lucide-react';
+import { Plus, Trash2, Calendar as CalIcon, CheckSquare, Layout, List, Grid, ChevronDown, ChevronRight, AlertCircle, Clock, Repeat, Skull, Zap, ClipboardList } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { Task, Subtask } from '../../../types';
 import { TiltCard } from '../../ui/TiltCard';
 import { MagneticButton } from '../../ui/MagneticButton';
+import { EmptyState } from '../../ui/EmptyState';
 
 const PriorityBadge = ({ priority }: { priority: string }) => {
   const colors = {
@@ -263,7 +264,13 @@ export default function TasksModule() {
         {viewMode === 'list' && (
             <div className="h-full overflow-y-auto pr-2 custom-scrollbar pb-10">
                 {tasks.map(t => <div key={t.id} draggable onDragStart={(e) => handleDragStart(e, t.id)}><TaskCard task={t} /></div>)}
-                {tasks.length === 0 && <div className="text-center py-20 text-[#585b70]">No directives found.</div>}
+                {tasks.length === 0 && (
+                  <EmptyState 
+                    title="No Directives Found" 
+                    description="Initialize a new directive to begin operations." 
+                    icon={ClipboardList} 
+                  />
+                )}
             </div>
         )}
 
