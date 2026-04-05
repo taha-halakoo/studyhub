@@ -7,17 +7,23 @@ import { MagneticButton } from '../../ui/MagneticButton';
 export default function SocialModule() {
   const { socialMessages, sendSocialMessage, user, profile, translate } = useApp();
   const [input, setInput] = useState('');
+  const [activeChannel, setActiveChannel] = useState('global');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [socialMessages]);
+  }, [socialMessages, activeChannel]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    await sendSocialMessage(input, 'global');
+    await sendSocialMessage(input, activeChannel);
     setInput('');
   };
+
+  const channels = Array.from(new Set(socialMessages.map(m => m.channel || 'global')));
+  if (!channels.includes('global')) channels.unshift('global');
+
+  const filteredMessages = socialMessages.filter(m => (m.channel || 'global') === activeChannel);
 
   return (
     <div className="h-full flex flex-col animate-fade-in pb-6 gap-6">
@@ -40,18 +46,27 @@ export default function SocialModule() {
             <Radio size={20} className="text-[#89b4fa] animate-pulse" /> Frequencies
           </h3>
           <div className="space-y-3 overflow-y-auto custom-scrollbar flex-1">
-            <div className="bg-[#1e1e2e] p-4 rounded-2xl border border-[#89b4fa] cursor-pointer shadow-[0_0_15px_rgba(137,180,250,0.1)] group">
-              <h3 className="font-bold text-white flex items-center gap-2 group-hover:text-[#89b4fa] transition-colors"><Globe size={16} /> Global Chat</h3>
-              <p className="text-xs text-[#a6adc8] mt-1 line-clamp-1">Open frequency for all engineers.</p>
-            </div>
-            {/* Mock Rooms */}
-            <div className="bg-[#1e1e2e]/50 p-4 rounded-2xl border border-[#313244] opacity-50 cursor-not-allowed flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-[#a6adc8] flex items-center gap-2"><Hash size={16} /> Lofi Lounge</h3>
-                <p className="text-xs text-[#585b70] mt-1">Locked (Lvl 5+)</p>
+            {channels.map(channel => (
+              <div 
+                key={channel}
+                onClick={() => setActiveChannel(channel)}
+                className={`p-4 rounded-2xl border cursor-pointer transition-all group ${
+                  activeChannel === channel 
+                    ? 'bg-[#1e1e2e] border-[#89b4fa] shadow-[0_0_15px_rgba(137,180,250,0.1)]' 
+                    : 'bg-[#1e1e2e]/50 border-[#313244] hover:border-[#89b4fa]/50'
+                }`}
+              >
+                <h3 className={`font-bold flex items-center gap-2 transition-colors ${
+                  activeChannel === channel ? 'text-white' : 'text-[#a6adc8] group-hover:text-white'
+                }`}>
+                  {channel === 'global' ? <Globe size={16} /> : <Hash size={16} />} 
+                  {channel === 'global' ? 'Global Chat' : channel}
+                </h3>
+                <p className="text-xs text-[#585b70] mt-1 line-clamp-1">
+                  {socialMessages.filter(m => (m.channel || 'global') === channel).length} messages
+                </p>
               </div>
-              <div className="w-2 h-2 rounded-full bg-[#f38ba8]" />
-            </div>
+            ))}
           </div>
         </TiltCard>
 
@@ -60,7 +75,7 @@ export default function SocialModule() {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#89b4fa] via-[#a6e3a1] to-[#89b4fa] opacity-30" />
           
           <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar relative z-10">
-            {socialMessages.map((msg, idx) => {
+            {filteredMessages.map((msg, idx) => {
               const isMe = msg.user_id === user?.id;
               return (
                 <div key={msg.id} className={`flex gap-4 ${isMe ? 'flex-row-reverse' : ''} animate-in slide-in-from-bottom-2 fade-in duration-300`}>
@@ -84,7 +99,7 @@ export default function SocialModule() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Broadcast to network..."
+              placeholder={`Broadcast to ${activeChannel}...`}
               className="flex-1 bg-[#1e1e2e] text-white rounded-xl px-5 py-4 outline-none border border-[#313244] focus:border-[#89b4fa] transition-all placeholder-[#585b70]"
             />
             <MagneticButton onClick={handleSend} className="bg-[#89b4fa] text-[#1e1e2e] p-4 rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(137,180,250,0.4)]">

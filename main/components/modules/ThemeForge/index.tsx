@@ -5,7 +5,7 @@ import { MagneticButton } from '../../ui/MagneticButton';
 import { TiltCard } from '../../ui/TiltCard';
 
 export default function ThemeForgeModule() {
-  const { saveCustomTheme, applyCustomTheme, customThemes } = useApp();
+  const { saveCustomTheme, applyCustomTheme, customThemes, profile } = useApp();
   const [name, setName] = useState('');
   const [colors, setColors] = useState<Record<string, string>>({
     background: '#1e1e2e',
@@ -25,7 +25,7 @@ export default function ThemeForgeModule() {
     <div className="h-full flex gap-8 animate-fade-in pb-6">
       
       {/* EDITOR */}
-      <TiltCard className="flex-1 bg-[#252535]/80 backdrop-blur-xl border border-[#313244] rounded-3xl p-8 shadow-2xl relative overflow-hidden flex flex-col">
+      <TiltCard className="flex-1 p-8 relative overflow-hidden flex flex-col">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#89b4fa] blur-[150px] opacity-10 pointer-events-none" />
         
         <div className="flex justify-between items-start mb-8 relative z-10">
@@ -81,31 +81,48 @@ export default function ThemeForgeModule() {
             <div className="flex flex-col gap-6">
                 <div className="text-xs font-bold text-[#a6adc8] uppercase ml-1">Live Simulation</div>
                 <div 
-                    className="flex-1 rounded-3xl border border-white/10 shadow-2xl p-6 flex flex-col gap-4 transition-all duration-500 relative overflow-hidden" 
-                    style={{ backgroundColor: colors.background }}
+                    className="flex-1 rounded-3xl shadow-2xl p-6 flex flex-col gap-4 transition-all duration-500 relative overflow-hidden border" 
+                    style={{ backgroundColor: colors.background, borderColor: colors.primary }}
                 >
-                    {/* Mock UI */}
-                    <div className="absolute top-0 left-0 w-full h-1" style={{ backgroundColor: colors.primary }} />
-                    <div className="flex justify-between items-center mb-4">
+                    {/* Visual Theme Preview */}
+                    <div className="absolute top-0 left-0 w-full h-1 transition-colors duration-500" style={{ backgroundColor: colors.primary }} />
+                    <div className="flex justify-between items-center mb-4 relative z-10">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: colors.surface }}>
-                                <Layers size={20} style={{ color: colors.primary }} />
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-colors duration-500" style={{ backgroundColor: colors.surface }}>
+                                <Layers size={20} style={{ color: colors.primary }} className="transition-colors duration-500" />
                             </div>
                             <div>
-                                <div className="font-bold text-lg" style={{ color: colors.text }}>Dashboard</div>
-                                <div className="text-xs opacity-50" style={{ color: colors.text }}>System Online</div>
+                                <div className="font-bold text-lg transition-colors duration-500" style={{ color: colors.text }}>Dashboard</div>
+                                <div className="text-xs opacity-80 transition-colors duration-500" style={{ color: colors.secondary }}>System Online</div>
                             </div>
+                        </div>
+                        {profile?.active_theme === name && name !== '' && (
+                            <div className="text-xs px-2 py-1 rounded border transition-colors duration-500" style={{ color: colors.secondary, borderColor: colors.secondary }}>Active</div>
+                        )}
+                    </div>
+                    
+                    <div className="p-4 rounded-2xl border border-white/5 relative z-10 transition-colors duration-500" style={{ backgroundColor: colors.surface }}>
+                        <div className="text-sm font-bold mb-2 flex justify-between">
+                           <span className="transition-colors duration-500" style={{ color: colors.text }}>Active Task</span>
+                           <span className="transition-colors duration-500" style={{ color: colors.primary }}>66%</span>
+                        </div>
+                        <div className="h-2 w-full rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                            <div className="h-full w-2/3 transition-all duration-500" style={{ backgroundColor: colors.secondary }} />
                         </div>
                     </div>
                     
-                    <div className="p-4 rounded-2xl border border-white/5" style={{ backgroundColor: colors.surface }}>
-                        <div className="text-sm font-bold mb-2" style={{ color: colors.secondary }}>Active Task</div>
-                        <div className="h-2 w-full rounded-full bg-black/20 overflow-hidden">
-                            <div className="h-full w-2/3" style={{ backgroundColor: colors.secondary }} />
+                    <div className="grid grid-cols-2 gap-3 relative z-10">
+                        <div className="p-3 rounded-xl border border-white/5 transition-colors duration-500" style={{ backgroundColor: colors.surface }}>
+                            <div className="text-xs mb-1 opacity-70 transition-colors duration-500" style={{ color: colors.text }}>Focus Time</div>
+                            <div className="font-bold transition-colors duration-500" style={{ color: colors.primary }}>45m</div>
+                        </div>
+                        <div className="p-3 rounded-xl border border-white/5 transition-colors duration-500" style={{ backgroundColor: colors.surface }}>
+                            <div className="text-xs mb-1 opacity-70 transition-colors duration-500" style={{ color: colors.text }}>Completed</div>
+                            <div className="font-bold transition-colors duration-500" style={{ color: colors.secondary }}>12/15</div>
                         </div>
                     </div>
 
-                    <button className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mt-auto" style={{ backgroundColor: colors.primary, color: colors.background }}>
+                    <button className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mt-auto relative z-10 transition-all active:scale-95" style={{ backgroundColor: colors.primary, color: colors.background }}>
                         Execute Action
                     </button>
                 </div>

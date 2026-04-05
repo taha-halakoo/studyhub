@@ -69,7 +69,7 @@ export const TiltCard = ({
   return (
     <div 
       ref={cardRef}
-      className={`transition-transform duration-200 ease-out transform-gpu will-change-transform ${className}`}
+      className={`transition-all duration-300 ease-out transform-gpu will-change-transform bg-[#1e1e2e]/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-3xl ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ transform }}

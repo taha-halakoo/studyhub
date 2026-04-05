@@ -62,6 +62,27 @@ export const useDataStore = create<DataState>((set: any) => ({
 
     const { data: quizzes } = await supabase.from('quizzes').select('*').eq('user_id', userId);
     if (quizzes) set({ quizzes });
+
+    // Fetch initial social messages
+    const { data: socialMessages } = await supabase
+      .from('social_messages')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .limit(50);
+    if (socialMessages) set({ socialMessages });
+
+    // Setup real-time subscription for social_messages
+    supabase.channel('social_messages_changes')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'social_messages' },
+        (payload) => {
+          set((state: DataState) => ({
+            socialMessages: [...state.socialMessages, payload.new as SocialMessage]
+          }));
+        }
+      )
+      .subscribe();
   },
 
   addJournalEntry: async (entry: JournalEntry, userId: string) => {
@@ -77,8 +98,7 @@ export const useDataStore = create<DataState>((set: any) => ({
   addAiMessage: (message: ChatMessage) => set((state: DataState) => ({ aiMessages: [...state.aiMessages, message] })),
 
   addSocialMessage: async (message: SocialMessage) => {
-    set((state: DataState) => ({ socialMessages: [...state.socialMessages, message] }));
-    // If you have a 'social_messages' table
+    // Local state is updated via the real-time subscription
     await supabase.from('social_messages').insert([message]);
   },
 

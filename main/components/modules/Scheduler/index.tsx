@@ -74,7 +74,7 @@ export default function SchedulerModule() {
                                             <div 
                                                 key={block.id} 
                                                 className="absolute inset-1 rounded-lg p-2 text-[10px] font-bold text-[#1e1e2e] overflow-hidden z-20 hover:scale-105 transition-transform cursor-pointer shadow-lg animate-in zoom-in duration-300 flex flex-col justify-center border border-black/10"
-                                                style={{ backgroundColor: block.color, height: 'calc(200% - 8px)' }} // Mock height
+                                                style={{ backgroundColor: block.color, height: `calc(${Math.max(1, parseInt(block.end_time.split(':')[0]) - parseInt(block.start_time.split(':')[0])) * 100}% - 8px)` }} 
                                             >
                                                 <span className="line-clamp-2">{block.title}</span>
                                                 <button onClick={() => deleteTimeBlock(block.id)} className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 hover:text-red-900 bg-white/20 rounded p-0.5"><Trash2 size={8} /></button>

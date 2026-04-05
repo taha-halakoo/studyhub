@@ -173,11 +173,40 @@ export default function AnalyticsModule() {
           </div>
         </TiltCard>
 
-        {/* Placeholder for Future Metric */}
-        <div className="bg-[#1e1e2e] border-2 border-dashed border-[#313244] rounded-3xl p-6 flex flex-col items-center justify-center text-[#585b70] md:col-span-2">
-            <BarChart3 size={48} className="opacity-20 mb-2" />
-            <p className="text-sm font-bold uppercase tracking-widest">More Analytics Modules Locked</p>
-        </div>
+        {/* Weekly Task Breakdown */}
+        <TiltCard className="bg-[#252535]/80 backdrop-blur-md p-6 rounded-3xl border border-[#313244] shadow-2xl md:col-span-2 group hover:border-[#cba6f7]/30 relative overflow-hidden">
+          <div className="absolute top-0 left-0 p-10 bg-[#cba6f7] blur-[100px] opacity-5 group-hover:opacity-10 transition-opacity" />
+          
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div>
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <BarChart3 className="text-[#cba6f7]" /> Task Completion Rate
+                </h3>
+                <p className="text-xs text-[#a6adc8] mt-1">Status over the last 7 days</p>
+            </div>
+            <div className="text-3xl font-black text-white">{completionRate}<span className="text-sm font-normal text-[#585b70] ml-1">%</span></div>
+          </div>
+
+          <div className="grid grid-cols-7 gap-3 h-32 relative z-10">
+            {last7Days.map((day) => {
+              const dayTasks = tasks.filter((t: Task) => t.created_at?.startsWith(day) || t.due_date?.startsWith(day));
+              const dayCompleted = dayTasks.filter((t: Task) => t.is_completed).length;
+              const dayTotal = dayTasks.length || 1;
+              const pct = dayTasks.length === 0 ? 0 : (dayCompleted / dayTotal) * 100;
+              return (
+                <div key={day} className="flex flex-col items-center gap-2 group/bar h-full">
+                  <div className="w-full bg-[#1e1e2e] flex-1 rounded-lg overflow-hidden flex flex-col justify-end border border-[#313244]/50 group-hover/bar:border-[#cba6f7]/50 transition-colors">
+                    <div 
+                      className="w-full bg-gradient-to-t from-[#cba6f7] to-[#f5e0dc] transition-all duration-1000 ease-out group-hover/bar:brightness-125"
+                      style={{ height: `${pct}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-[#585b70] font-mono group-hover/bar:text-white transition-colors">{day.slice(5)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </TiltCard>
 
       </div>
     </div>

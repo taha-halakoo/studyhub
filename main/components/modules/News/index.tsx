@@ -2,27 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { Newspaper, ExternalLink, RefreshCw, Filter, Globe, Zap, Radio } from 'lucide-react';
 import { TiltCard } from '../../ui/TiltCard';
 import { MagneticButton } from '../../ui/MagneticButton';
+import { supabase } from '../../../lib/supabase';
 
-const MOCK_NEWS = [
-  { id: 1, title: 'Advancements in Quantum Computing Architecture', source: 'TechDaily', category: 'Tech', time: '2h ago' },
-  { id: 2, title: 'The Neurobiology of Deep Focus', source: 'ScienceNet', category: 'Science', time: '4h ago' },
-  { id: 3, title: 'Optimizing React Performance with Concurrent Mode', source: 'DevDigest', category: 'Coding', time: '5h ago' },
-  { id: 4, title: 'Global Energy Trends for 2025', source: 'WorldEng', category: 'Engineering', time: '1d ago' },
-  { id: 5, title: 'SpaceX Starship Successful Orbit', source: 'SpaceNews', category: 'Tech', time: '1d ago' },
-  { id: 6, title: 'New Alloy Discovered for High-Temp Applications', source: 'MaterialScience', category: 'Engineering', time: '2d ago' },
-];
+interface NewsArticle {
+  id: string | number;
+  title: string;
+  source: string;
+  category: string;
+  time: string;
+}
 
 export default function NewsModule() {
   const [filter, setFilter] = useState('All');
-  const [articles, setArticles] = useState(MOCK_NEWS);
-  const [loading, setLoading] = useState(false);
+  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchNews = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('news').select('*').order('created_at', { ascending: false }).limit(20);
+      if (data && !error) {
+        setArticles(data as NewsArticle[]);
+      } else {
+        setArticles([]);
+      }
+    } catch (e) {
+      console.error(e);
+      setArticles([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
 
   const refresh = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setArticles([...MOCK_NEWS].sort(() => Math.random() - 0.5));
-      setLoading(false);
-    }, 1000);
+    fetchNews();
   };
 
   const filtered = filter === 'All' ? articles : articles.filter(a => a.category === filter);

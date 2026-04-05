@@ -74,6 +74,14 @@ const ToastContainer = () => {
   );
 };
 
+const LiquidBackground = () => (
+  <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#1e1e2e]">
+    <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#89b4fa] rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob" />
+    <div className="absolute top-[40%] right-[-10%] w-[40vw] h-[40vw] bg-[#a6e3a1] rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-2000" />
+    <div className="absolute bottom-[-20%] left-[20%] w-[60vw] h-[60vw] bg-[#f38ba8] rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-4000" />
+  </div>
+);
+
 const AuthScreen = () => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [loading, setLoading] = useState(false);
@@ -240,6 +248,7 @@ const StudyHubShell = () => {
 
   return (
     <div className="flex h-screen w-full text-white overflow-hidden font-sans transition-colors duration-500 relative">
+      <LiquidBackground />
       <BackgroundParticles />
       <NetworkBlocker />
       <ToastContainer />
